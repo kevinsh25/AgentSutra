@@ -3,6 +3,9 @@
 /pkg/
 *.test
 *.exe
+**/bin/
+**/mcp-orchestrator
+**/mcp-orchestrator-stdio
 
 # Node
 node_modules/
@@ -15,7 +18,7 @@ node_modules/
 .idea/
 .vscode/
 .github/
-.build/
+**/.build/
 # Logs
 *.log 
 
