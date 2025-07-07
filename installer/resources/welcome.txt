@@ -1,0 +1,40 @@
+Welcome to MCP Orchestrator
+
+🚀 PROFESSIONAL AI TOOL INTEGRATION
+
+MCP Orchestrator provides seamless integration between Claude Desktop and powerful business tools including GoHighLevel CRM, Meta Ads, Google Ads, and more.
+
+📋 WHAT YOU'RE INSTALLING:
+
+• MCP Orchestrator UI - Modern macOS application for managing MCP servers
+• Backend Services - High-performance Go-based orchestration engine  
+• Claude Desktop Integration - Automatic configuration for instant tool access
+• 253+ GoHighLevel Tools - Complete CRM automation and marketing suite
+
+🔧 SYSTEM REQUIREMENTS:
+
+• macOS 11.0 (Big Sur) or later
+• 100MB available disk space
+• Claude Desktop (recommended)
+
+✨ KEY FEATURES:
+
+• Zero Configuration - Works immediately after installation
+• Professional UI - Modern glassmorphism design
+• High Performance - Efficient tool orchestration
+• Secure - Local processing with secure API integration
+• Comprehensive - Full GoHighLevel CRM tool suite
+
+🚀 GETTING STARTED:
+
+After installation:
+1. Restart Claude Desktop if it's running
+2. Open MCP Orchestrator from Applications
+3. In Claude Desktop, look for the 🔌 icon to see connected tools
+4. Start using 253+ CRM and marketing automation tools!
+
+📞 SUPPORT:
+
+This professional-grade integration provides enterprise-level AI tool access for your business automation needs.
+
+Ready to supercharge your AI workflow? Click Continue to install. 

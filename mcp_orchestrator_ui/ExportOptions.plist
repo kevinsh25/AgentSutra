@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Distribution Method -->
+	<key>method</key>
+	<string>developer-id</string>
+	
+	<!-- Code Signing Configuration -->
+	<key>signingStyle</key>
+	<string>manual</string>
+	
+	<!-- Developer ID Application Certificate -->
+	<key>signingCertificate</key>
+	<string>Developer ID Application</string>
+	
+	<!-- Provisioning Profile -->
+	<key>provisioningProfiles</key>
+	<dict>
+		<key>com.mcporchestrator.MCPOrchestratorUI</key>
+		<string>MCP Orchestrator UI</string>
+	</dict>
+	
+	<!-- Destination -->
+	<key>destination</key>
+	<string>export</string>
+	
+	<!-- Compiler Bitcode -->
+	<key>compileBitcode</key>
+	<false/>
+	
+	<!-- Upload Symbols -->
+	<key>uploadSymbols</key>
+	<true/>
+	
+	<!-- Strip Swift Symbols -->
+	<key>stripSwiftSymbols</key>
+	<true/>
+	
+	<!-- Team ID (placeholder - will be set during build) -->
+	<key>teamID</key>
+	<string>TEAM_ID_PLACEHOLDER</string>
+	
+	<!-- Thinning -->
+	<key>thinning</key>
+	<string>&lt;none&gt;</string>
+	
+	<!-- Generate App Size Report -->
+	<key>generateAppSizeReport</key>
+	<false/>
+	
+	<!-- Embed On Demand Resources Asset Pack -->
+	<key>embedOnDemandResourcesAssetPacksInBundle</key>
+	<false/>
+	
+	<!-- Manifest -->
+	<key>manifest</key>
+	<dict>
+		<key>appURL</key>
+		<string>https://github.com/mcporchestrator/releases</string>
+		<key>displayImageURL</key>
+		<string>https://github.com/mcporchestrator/icon.png</string>
+		<key>fullSizeImageURL</key>
+		<string>https://github.com/mcporchestrator/icon-full.png</string>
+	</dict>
+</dict>
+</plist> 

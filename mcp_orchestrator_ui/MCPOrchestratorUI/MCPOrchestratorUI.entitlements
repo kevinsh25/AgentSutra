@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- App Sandbox -->
+	<key>com.apple.security.app-sandbox</key>
+	<true/>
+	
+	<!-- Network Access -->
+	<key>com.apple.security.network.client</key>
+	<true/>
+	<key>com.apple.security.network.server</key>
+	<true/>
+	
+	<!-- File Access -->
+	<key>com.apple.security.files.user-selected.read-write</key>
+	<true/>
+	<key>com.apple.security.files.downloads.read-write</key>
+	<true/>
+	
+	<!-- Application Groups for IPC -->
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>group.com.mcporchestrator.shared</string>
+	</array>
+	
+	<!-- Keychain Access for Secure Storage -->
+	<key>keychain-access-groups</key>
+	<array>
+		<string>$(AppIdentifierPrefix)com.mcporchestrator.keychain</string>
+	</array>
+	
+	<!-- Process Management -->
+	<key>com.apple.security.temporary-exception.mach-lookup.global-name</key>
+	<array>
+		<string>com.mcporchestrator.backend</string>
+		<string>com.mcporchestrator.analytics</string>
+	</array>
+	
+	<!-- Print Support -->
+	<key>com.apple.security.print</key>
+	<true/>
+	
+	<!-- Background Processing -->
+	<key>com.apple.developer.background-modes</key>
+	<array>
+		<string>background-processing</string>
+	</array>
+	
+	<!-- Data Protection -->
+	<key>com.apple.developer.usernotifications.filtering</key>
+	<true/>
+	
+	<!-- Hardened Runtime -->
+	<key>com.apple.security.cs.allow-jit</key>
+	<false/>
+	<key>com.apple.security.cs.allow-unsigned-executable-memory</key>
+	<false/>
+	<key>com.apple.security.cs.allow-dyld-environment-variables</key>
+	<false/>
+	<key>com.apple.security.cs.disable-library-validation</key>
+	<false/>
+	<key>com.apple.security.cs.disable-executable-page-protection</key>
+	<false/>
+	
+	<!-- Security Restrictions -->
+	<key>com.apple.security.inherit</key>
+	<false/>
+	<key>com.apple.security.automation.apple-events</key>
+	<false/>
+	
+	<!-- Device Access (Disabled for Security) -->
+	<key>com.apple.security.device.audio-input</key>
+	<false/>
+	<key>com.apple.security.device.camera</key>
+	<false/>
+	<key>com.apple.security.personal-information.location</key>
+	<false/>
+	<key>com.apple.security.personal-information.addressbook</key>
+	<false/>
+	<key>com.apple.security.personal-information.calendars</key>
+	<false/>
+	
+	<!-- Development -->
+	<key>com.apple.security.get-task-allow</key>
+	<false/>
+</dict>
+</plist> 

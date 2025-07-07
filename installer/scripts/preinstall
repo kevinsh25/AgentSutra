@@ -1,0 +1,49 @@
+#!/bin/bash
+
+# MCP Orchestrator Pre-Installation Script
+# This script checks system requirements before installation
+
+set -e
+
+echo "Checking system requirements for MCP Orchestrator..."
+
+# Check macOS version
+MACOS_VERSION=$(sw_vers -productVersion)
+MACOS_MAJOR=$(echo "$MACOS_VERSION" | cut -d. -f1)
+MACOS_MINOR=$(echo "$MACOS_VERSION" | cut -d. -f2)
+
+echo "macOS Version: $MACOS_VERSION"
+
+# Require macOS 11.0 or later (Big Sur+)
+if [ "$MACOS_MAJOR" -lt 11 ]; then
+    echo "❌ Error: MCP Orchestrator requires macOS 11.0 (Big Sur) or later"
+    echo "   Current version: $MACOS_VERSION"
+    exit 1
+fi
+
+# Check available disk space (require at least 100MB)
+AVAILABLE_SPACE=$(df -m /Applications | tail -1 | awk '{print $4}')
+if [ "$AVAILABLE_SPACE" -lt 100 ]; then
+    echo "❌ Error: Insufficient disk space"
+    echo "   Required: 100MB, Available: ${AVAILABLE_SPACE}MB"
+    exit 1
+fi
+
+# Check if Claude Desktop is installed (optional warning)
+if [ ! -d "/Applications/Claude.app" ]; then
+    echo "⚠️  Warning: Claude Desktop not found in /Applications"
+    echo "   MCP Orchestrator works best with Claude Desktop"
+    echo "   You can download it from: https://claude.ai/download"
+    echo ""
+fi
+
+# Check if existing installation exists
+if [ -f "/usr/local/bin/mcp-orchestrator" ]; then
+    echo "🔄 Existing MCP Orchestrator installation detected"
+    echo "   This installation will update the existing version"
+fi
+
+echo "✅ System requirements check completed"
+echo ""
+
+exit 0 

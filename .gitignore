@@ -1,0 +1,22 @@
+# Go
+/bin/
+/pkg/
+*.test
+*.exe
+
+# Node
+node_modules/
+.next/
+
+# macOS
+.DS_Store
+
+# Editor
+.idea/
+.vscode/
+.github/
+.build/
+# Logs
+*.log 
+
+mcp_orchestrator_ui/.build/

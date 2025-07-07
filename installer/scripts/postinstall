@@ -1,0 +1,107 @@
+#!/bin/bash
+
+# MCP Orchestrator Post-Installation Script
+# This script configures Claude Desktop to use the MCP Orchestrator
+
+set -e
+
+echo "Configuring MCP Orchestrator..."
+
+# Function to get the current user (works even when run as root)
+get_current_user() {
+    if [ "$SUDO_USER" ]; then
+        echo "$SUDO_USER"
+    elif [ "$USER" ]; then
+        echo "$USER"
+    else
+        echo "$(logname 2>/dev/null || whoami)"
+    fi
+}
+
+USER_NAME=$(get_current_user)
+USER_HOME=$(eval echo "~$USER_NAME")
+CLAUDE_CONFIG_DIR="$USER_HOME/Library/Application Support/Claude"
+CLAUDE_CONFIG_FILE="$CLAUDE_CONFIG_DIR/claude_desktop_config.json"
+
+echo "Setting up for user: $USER_NAME"
+echo "Home directory: $USER_HOME"
+
+# Create Claude config directory if it doesn't exist
+sudo -u "$USER_NAME" mkdir -p "$CLAUDE_CONFIG_DIR"
+
+# Check if Claude config already exists
+if [ -f "$CLAUDE_CONFIG_FILE" ]; then
+    echo "Backing up existing Claude Desktop configuration..."
+    sudo -u "$USER_NAME" cp "$CLAUDE_CONFIG_FILE" "$CLAUDE_CONFIG_FILE.backup.$(date +%Y%m%d_%H%M%S)"
+    
+    # Check if our orchestrator is already configured
+    if grep -q "mcp-orchestrator" "$CLAUDE_CONFIG_FILE"; then
+        echo "MCP Orchestrator already configured in Claude Desktop"
+        
+        # Update the path to use the installed location
+        sudo -u "$USER_NAME" sed -i '' 's|"command": "[^"]*mcp-orchestrator-stdio"|"command": "/usr/local/bin/mcp-orchestrator-stdio"|g' "$CLAUDE_CONFIG_FILE"
+        echo "Updated MCP Orchestrator path to /usr/local/bin/mcp-orchestrator-stdio"
+    else
+        # Add our configuration to existing config
+        echo "Adding MCP Orchestrator to existing Claude Desktop configuration..."
+        
+        # Create a temporary file with the updated config
+        TMP_CONFIG=$(mktemp)
+        sudo -u "$USER_NAME" python3 -c "
+import json
+import sys
+
+with open('$CLAUDE_CONFIG_FILE', 'r') as f:
+    config = json.load(f)
+
+if 'mcpServers' not in config:
+    config['mcpServers'] = {}
+
+config['mcpServers']['mcp-orchestrator'] = {
+    'command': '/usr/local/bin/mcp-orchestrator-stdio'
+}
+
+with open('$TMP_CONFIG', 'w') as f:
+    json.dump(config, f, indent=2)
+"
+        sudo -u "$USER_NAME" cp "$TMP_CONFIG" "$CLAUDE_CONFIG_FILE"
+        rm "$TMP_CONFIG"
+    fi
+else
+    echo "Creating new Claude Desktop configuration..."
+    sudo -u "$USER_NAME" cat > "$CLAUDE_CONFIG_FILE" << 'EOF'
+{
+  "mcpServers": {
+    "mcp-orchestrator": {
+      "command": "/usr/local/bin/mcp-orchestrator-stdio"
+    }
+  }
+}
+EOF
+fi
+
+# Set proper permissions
+sudo chown "$USER_NAME:staff" "$CLAUDE_CONFIG_FILE"
+sudo chmod 644 "$CLAUDE_CONFIG_FILE"
+
+# Make binaries executable
+chmod +x /usr/local/bin/mcp-orchestrator
+chmod +x /usr/local/bin/mcp-orchestrator-stdio
+
+echo ""
+echo "✅ MCP Orchestrator installation completed successfully!"
+echo ""
+echo "📋 What's been installed:"
+echo "   • MCP Orchestrator UI app in /Applications"
+echo "   • Backend services in /usr/local/bin"
+echo "   • Configuration in /usr/local/share/mcp-orchestrator"
+echo "   • Claude Desktop integration configured"
+echo ""
+echo "🚀 To get started:"
+echo "   1. Restart Claude Desktop if it's running"
+echo "   2. Open MCP Orchestrator UI from Applications"
+echo "   3. In Claude Desktop, look for the 🔌 icon to see connected tools"
+echo ""
+echo "📞 Support: The MCP Orchestrator provides 253+ tools for GoHighLevel CRM"
+
+exit 0 

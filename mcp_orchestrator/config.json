@@ -1,0 +1,133 @@
+{
+  "context_limits": {
+    "default_tool_limit": 500,
+    "max_tool_limit": 1000,
+    "enable_pagination": false,
+    "default_simplified_mode": false,
+    "enable_filtering": true
+  },
+  "tool_categories": {
+    "high_priority": [
+      "gohighlevel",
+      "meta-ads",
+      "google-ads"
+    ],
+    "medium_priority": [
+      "automation",
+      "analytics",
+      "campaigns"
+    ],
+    "low_priority": [
+      "admin",
+      "utilities",
+      "deprecated"
+    ]
+  },
+  "presets": {
+    "minimal": {
+      "limit": 50,
+      "simplified": false,
+      "categories": ["gohighlevel"]
+    },
+    "contacts_focused": {
+      "limit": 100,
+      "simplified": false,
+      "categories": ["gohighlevel"]
+    },
+    "ads_focused": {
+      "limit": 100,
+      "simplified": false,
+      "categories": ["meta-ads", "google-ads"]
+    },
+    "full_crm": {
+      "limit": 500,
+      "simplified": false,
+      "categories": ["gohighlevel", "meta-ads", "google-ads"]
+    },
+    "all_tools": {
+      "limit": 1000,
+      "simplified": false,
+      "categories": ["all"]
+    }
+  },
+  "servers": {
+    "gohighlevel": {
+      "description": "GoHighLevel CRM integration with contact management, tasks, notes, and marketing automation",
+      "typical_tool_count": 253,
+      "categories": ["contacts", "crm", "marketing", "automation"],
+      "status": "active"
+    },
+    "meta-ads": {
+      "description": "Facebook and Instagram Ads (Meta Ads) integration with campaign management and analytics",
+      "typical_tool_count": 22,
+      "categories": ["advertising", "meta", "facebook", "instagram"],
+      "status": "available"
+    },
+    "google-ads": {
+      "description": "Google Ads integration with campaign management and performance analytics",
+      "typical_tool_count": 30,
+      "categories": ["advertising", "google", "search", "display"],
+      "status": "available"
+    },
+    "figma": {
+      "description": "Figma design collaboration platform with 5 tools for accessing files and design nodes",
+      "typical_tool_count": 5,
+      "categories": ["design", "collaboration"],
+      "status": "available"
+    },
+    "github": {
+      "description": "GitHub version control and development collaboration with 12 tools",
+      "typical_tool_count": 12,
+      "categories": ["development", "version_control"],
+      "status": "available"
+    },
+    "puppeteer": {
+      "description": "Puppeteer web scraping and automation with 5 tools",
+      "typical_tool_count": 5,
+      "categories": ["web_browser", "automation"],
+      "status": "available"
+    },
+    "slack": {
+      "description": "Slack team communication and workspace management with 10 tools",
+      "typical_tool_count": 10,
+      "categories": ["communication", "productivity"],
+      "status": "available"
+    },
+    "notion": {
+      "description": "Notion all-in-one workspace with 7 tools for notes and databases",
+      "typical_tool_count": 7,
+      "categories": ["productivity", "documentation"],
+      "status": "available"
+    },
+    "gmail": {
+      "description": "Gmail integration with 9 tools for email management",
+      "typical_tool_count": 9,
+      "categories": ["email", "communication"],
+      "status": "available"
+    },
+    "brave-search": {
+      "description": "Brave Search web search and data retrieval with 3 tools",
+      "typical_tool_count": 3,
+      "categories": ["web_browser", "search"],
+      "status": "available"
+    },
+    "google-maps": {
+      "description": "Google Maps location services and mapping with 6 tools",
+      "typical_tool_count": 6,
+      "categories": ["maps", "location"],
+      "status": "available"
+    },
+    "stripe": {
+      "description": "Stripe payment processing and billing with 12 tools",
+      "typical_tool_count": 12,
+      "categories": ["ecommerce", "payments"],
+      "status": "available"
+    },
+    "docker": {
+      "description": "Docker container management with 8 tools",
+      "typical_tool_count": 8,
+      "categories": ["cloud", "infrastructure"],
+      "status": "available"
+    }
+  }
+} 

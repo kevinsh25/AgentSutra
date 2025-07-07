@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<installer-gui-script minSpecVersion="1">
+    <title>MCP Orchestrator</title>
+    <organization>com.mcporchestrator</organization>
+    <domains enable_localSystem="true"/>
+    <options customize="never" require-scripts="true" rootVolumeOnly="true" hostArchitectures="arm64,x86_64"/>
+    
+    <!-- Define Documents -->
+    <welcome file="welcome.txt" mime-type="text/plain" />
+    
+    <!-- Define Installer Properties -->
+    <background file="background.png" mime-type="image/png" alignment="center" scaling="proportional"/>
+    
+    <!-- Installation Choices -->
+    <choices-outline>
+        <line choice="default">
+            <line choice="com.mcporchestrator.pkg"/>
+        </line>
+    </choices-outline>
+    
+    <choice id="default"/>
+    <choice id="com.mcporchestrator.pkg" visible="false">
+        <pkg-ref id="com.mcporchestrator.pkg"/>
+    </choice>
+    
+    <pkg-ref id="com.mcporchestrator.pkg" version="1.0.0" auth="root">MCPOrchestrator-component.pkg</pkg-ref>
+    
+    <!-- System Requirements -->
+    <installation-check script="installCheck();"/>
+    
+    <script>
+    <![CDATA[
+        function installCheck() {
+            var result = false;
+            try {
+                result = system.compareVersions(system.version.ProductVersion, '11.0') >= 0;
+            } catch (e) {}
+            
+            if (!result) {
+                my.result.title = 'System Requirements Not Met';
+                my.result.message = 'MCP Orchestrator requires macOS 11.0 (Big Sur) or later.';
+                my.result.type = 'Fatal';
+            }
+            
+            return result;
+        }
+    ]]>
+    </script>
+</installer-gui-script> 
