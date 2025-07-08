@@ -77,6 +77,25 @@ func (cv *ConfigValidator) ValidateServer(serverID string, server *ServerConfig)
 		cv.validateGoHighLevelServer(server, &result)
 	case "meta-ads", "google-ads":
 		cv.validatePythonServer(server, &result)
+	case "github":
+		cv.validateNodeJSServerWithCredentials(server, &result, []string{"GITHUB_PERSONAL_ACCESS_TOKEN"})
+	case "slack":
+		cv.validateNodeJSServerWithCredentials(server, &result, []string{"SLACK_BOT_TOKEN"})
+	case "notion":
+		cv.validateNodeJSServerWithCredentials(server, &result, []string{"NOTION_API_KEY"})
+	case "stripe":
+		cv.validateNodeJSServerWithCredentials(server, &result, []string{"STRIPE_SECRET_KEY"})
+	case "google-maps":
+		cv.validateNodeJSServerWithCredentials(server, &result, []string{"GOOGLE_MAPS_API_KEY"})
+	case "gmail":
+		cv.validateNodeJSServerWithCredentials(server, &result, []string{"GMAIL_CREDENTIALS"})
+	case "figma":
+		cv.validateNodeJSServerWithCredentials(server, &result, []string{"FIGMA_ACCESS_TOKEN"})
+	case "brave-search":
+		cv.validateNodeJSServerWithCredentials(server, &result, []string{"BRAVE_SEARCH_API_KEY"})
+	case "puppeteer", "docker":
+		// These servers don't require API keys, just basic Node.js validation
+		cv.validateNodeJSServer(server, &result)
 	default:
 		cv.validateNodeJSServer(server, &result)
 	}
@@ -289,6 +308,15 @@ func (cv *ConfigValidator) validateNodeJSServer(server *ServerConfig, result *Va
 		Command:     fmt.Sprintf("npx -y %s --help", packageName),
 		AutoFix:     false,
 	})
+}
+
+// validateNodeJSServerWithCredentials validates Node.js servers that require specific credentials
+func (cv *ConfigValidator) validateNodeJSServerWithCredentials(server *ServerConfig, result *ValidationResult, requiredEnvVars []string) {
+	// First do basic Node.js validation
+	cv.validateNodeJSServer(server, result)
+
+	// Check for required environment variables
+	cv.checkRequiredEnvVars(server.InstallPath, requiredEnvVars, result)
 }
 
 // checkRequiredEnvVars validates required environment variables

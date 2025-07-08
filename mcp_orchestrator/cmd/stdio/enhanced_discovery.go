@@ -122,6 +122,41 @@ func (ed *EnhancedDiscovery) DiscoverToolsWithDiagnostics() ([]interface{}, []Di
 				if tool, ok := toolData.(map[string]interface{}); ok {
 					tool["_server_id"] = cached.ServerID
 					tool["_discovered_at"] = cached.Timestamp.Unix()
+
+					// Set category if not already set
+					if tool["category"] == nil || tool["category"] == "" {
+						switch cached.ServerID {
+						case "gohighlevel":
+							tool["category"] = "gohighlevel"
+						case "meta-ads":
+							tool["category"] = "meta-ads"
+						case "google-ads":
+							tool["category"] = "google-ads"
+						case "github":
+							tool["category"] = "development"
+						case "puppeteer":
+							tool["category"] = "web_browser"
+						case "slack":
+							tool["category"] = "communication"
+						case "gmail":
+							tool["category"] = "email"
+						case "brave-search":
+							tool["category"] = "search"
+						case "notion":
+							tool["category"] = "productivity"
+						case "figma":
+							tool["category"] = "design"
+						case "google-maps":
+							tool["category"] = "maps"
+						case "stripe":
+							tool["category"] = "payments"
+						case "docker":
+							tool["category"] = "development"
+						default:
+							tool["category"] = cached.ServerID
+						}
+					}
+
 					allTools = append(allTools, tool)
 				}
 			}
@@ -184,13 +219,13 @@ func (ed *EnhancedDiscovery) discoverServerTools(serverID string) ([]interface{}
 	cmd.Stdin = strings.NewReader(input)
 
 	// Use CommandContext for proper timeout handling
-	cmd = exec.CommandContext(ctx, cmd.Path, cmd.Args[1:]...)
-	cmd.Dir = cmd.Dir
-	cmd.Env = cmd.Env
-	cmd.Stdin = strings.NewReader(input)
+	cmdCtx := exec.CommandContext(ctx, cmd.Args[0], cmd.Args[1:]...)
+	cmdCtx.Dir = cmd.Dir
+	cmdCtx.Env = cmd.Env
+	cmdCtx.Stdin = strings.NewReader(input)
 
 	// Capture both stdout and stderr
-	output, err := cmd.CombinedOutput()
+	output, err := cmdCtx.CombinedOutput()
 	if err != nil {
 		return nil, fmt.Errorf("execution failed: %v, output: %s", err, string(output))
 	}

@@ -53,6 +53,7 @@ func main() {
 			api.POST("/servers/:id/stop", uiAPI.StopServer)
 			api.GET("/servers/:id/status", uiAPI.GetServerStatus)
 			api.GET("/servers/:id/logs", uiAPI.GetServerLogs)
+			api.GET("/servers/:id/credentials", uiAPI.GetServerRequiredCredentials)
 
 			// Validation and diagnostics endpoints
 			api.GET("/validation/servers", uiAPI.ValidateServers)

@@ -153,11 +153,12 @@ func (p *StdioProxy) handleToolsList(msg MCPMessage) MCPMessage {
 	}
 
 	// Parse parameters for pagination and filtering
-	var limit int = 10 // Default limit to prevent context overflow
+	var limit int = 25 // Balanced default limit for context management
 	var offset int = 0
 	var category string
 	var namePattern string
-	var simplified bool = true // Default to simplified mode
+	var simplified bool = true    // Default to simplified mode
+	var ultraMinimal bool = false // Ultra-minimal mode for very large tool sets
 
 	if msg.Params != nil {
 		if params, ok := msg.Params.(map[string]interface{}); ok {
@@ -176,6 +177,9 @@ func (p *StdioProxy) handleToolsList(msg MCPMessage) MCPMessage {
 			if s, ok := params["simplified"].(bool); ok {
 				simplified = s
 			}
+			if u, ok := params["ultra_minimal"].(bool); ok {
+				ultraMinimal = u
+			}
 		}
 	}
 
@@ -185,11 +189,16 @@ func (p *StdioProxy) handleToolsList(msg MCPMessage) MCPMessage {
 	// Apply filtering
 	filteredTools := p.filterTools(allTools, category, namePattern)
 
-	// Apply pagination
-	paginatedTools := p.paginateTools(filteredTools, limit, offset)
+	// Intelligent context-aware limit adjustment
+	adjustedLimit := p.adjustLimitForContext(limit, len(filteredTools))
 
-	// Apply simplified schema if requested
-	if simplified {
+	// Apply pagination
+	paginatedTools := p.paginateTools(filteredTools, adjustedLimit, offset)
+
+	// Apply schema simplification based on mode
+	if ultraMinimal {
+		paginatedTools = p.ultraMinimalToolSchemas(paginatedTools)
+	} else if simplified {
 		paginatedTools = p.simplifyToolSchemas(paginatedTools)
 	}
 
@@ -201,12 +210,15 @@ func (p *StdioProxy) handleToolsList(msg MCPMessage) MCPMessage {
 			"tools":       paginatedTools,
 			"diagnostics": diagnostics,
 			"_meta": map[string]interface{}{
-				"total_count":    len(filteredTools),
-				"returned_count": len(paginatedTools),
-				"limit":          limit,
-				"offset":         offset,
-				"simplified":     simplified,
-				"has_more":       offset+limit < len(filteredTools),
+				"total_count":       len(filteredTools),
+				"returned_count":    len(paginatedTools),
+				"requested_limit":   limit,
+				"adjusted_limit":    adjustedLimit,
+				"offset":            offset,
+				"simplified":        simplified,
+				"ultra_minimal":     ultraMinimal,
+				"has_more":          offset+adjustedLimit < len(filteredTools),
+				"context_optimized": adjustedLimit != limit,
 			},
 		},
 	}
@@ -1170,6 +1182,61 @@ func (p *StdioProxy) simplifyToolSchemas(tools []interface{}) []interface{} {
 	}
 
 	return simplified
+}
+
+// adjustLimitForContext intelligently adjusts the limit based on total tools and context constraints
+func (p *StdioProxy) adjustLimitForContext(requestedLimit, totalTools int) int {
+	// If we have a massive number of tools (like GoHighLevel's 253), be more conservative
+	if totalTools > 200 {
+		// For very large tool sets, cap at 20 to prevent context overflow
+		if requestedLimit > 20 {
+			return 20
+		}
+	} else if totalTools > 100 {
+		// For moderately large tool sets, cap at 30
+		if requestedLimit > 30 {
+			return 30
+		}
+	} else if totalTools > 50 {
+		// For medium tool sets, cap at 40
+		if requestedLimit > 40 {
+			return 40
+		}
+	}
+
+	// For smaller tool sets, allow the requested limit up to 50
+	if requestedLimit > 50 {
+		return 50
+	}
+
+	return requestedLimit
+}
+
+// ultraMinimalToolSchemas returns ultra-minimal tool schemas with only name and description
+func (p *StdioProxy) ultraMinimalToolSchemas(tools []interface{}) []interface{} {
+	var ultraMinimal []interface{}
+
+	for _, toolData := range tools {
+		tool, ok := toolData.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		// Ultra-minimal version with only essential fields
+		minimalTool := map[string]interface{}{
+			"name":        tool["name"],
+			"description": tool["description"],
+		}
+
+		// Add category if available for grouping
+		if category, ok := tool["category"]; ok && category != nil {
+			minimalTool["category"] = category
+		}
+
+		ultraMinimal = append(ultraMinimal, minimalTool)
+	}
+
+	return ultraMinimal
 }
 
 // getMetaAdsTools connects to Meta Ads server and gets real tools

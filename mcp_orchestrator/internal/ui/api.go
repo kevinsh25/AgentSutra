@@ -71,21 +71,21 @@ func (a *API) InstallServer(c *gin.Context) {
 		return
 	}
 
-	// Validate required fields for GoHighLevel
-	if req.ServerID == "gohighlevel" {
+	// Validate required credentials for servers that need them
+	switch req.ServerID {
+	case "gohighlevel":
 		if req.Config["GHL_API_KEY"] == "" {
 			c.JSON(http.StatusBadRequest, gin.H{
-				"error": "GHL_API_KEY is required",
+				"error": "GHL_API_KEY is required for GoHighLevel MCP",
 			})
 			return
 		}
 		if req.Config["GHL_LOCATION_ID"] == "" {
 			c.JSON(http.StatusBadRequest, gin.H{
-				"error": "GHL_LOCATION_ID is required",
+				"error": "GHL_LOCATION_ID is required for GoHighLevel MCP",
 			})
 			return
 		}
-
 		// Set default values
 		if req.Config["GHL_BASE_URL"] == "" {
 			req.Config["GHL_BASE_URL"] = "https://services.leadconnectorhq.com"
@@ -96,6 +96,100 @@ func (a *API) InstallServer(c *gin.Context) {
 		if req.Config["PORT"] == "" {
 			req.Config["PORT"] = "8000"
 		}
+	case "meta-ads":
+		if req.Config["META_ACCESS_TOKEN"] == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "META_ACCESS_TOKEN is required for Meta Ads MCP",
+			})
+			return
+		}
+		if req.Config["META_APP_ID"] == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "META_APP_ID is required for Meta Ads MCP",
+			})
+			return
+		}
+		if req.Config["META_APP_SECRET"] == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "META_APP_SECRET is required for Meta Ads MCP",
+			})
+			return
+		}
+	case "google-ads":
+		if req.Config["GOOGLE_ADS_CUSTOMER_ID"] == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "GOOGLE_ADS_CUSTOMER_ID is required for Google Ads MCP",
+			})
+			return
+		}
+		if req.Config["GOOGLE_ADS_DEVELOPER_TOKEN"] == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "GOOGLE_ADS_DEVELOPER_TOKEN is required for Google Ads MCP",
+			})
+			return
+		}
+	case "github":
+		if req.Config["GITHUB_PERSONAL_ACCESS_TOKEN"] == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "GITHUB_PERSONAL_ACCESS_TOKEN is required for GitHub MCP",
+			})
+			return
+		}
+	case "slack":
+		if req.Config["SLACK_BOT_TOKEN"] == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "SLACK_BOT_TOKEN is required for Slack MCP",
+			})
+			return
+		}
+	case "notion":
+		if req.Config["NOTION_API_KEY"] == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "NOTION_API_KEY is required for Notion MCP",
+			})
+			return
+		}
+	case "stripe":
+		if req.Config["STRIPE_SECRET_KEY"] == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "STRIPE_SECRET_KEY is required for Stripe MCP",
+			})
+			return
+		}
+	case "google-maps":
+		if req.Config["GOOGLE_MAPS_API_KEY"] == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "GOOGLE_MAPS_API_KEY is required for Google Maps MCP",
+			})
+			return
+		}
+	case "gmail":
+		if req.Config["GMAIL_CREDENTIALS"] == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "GMAIL_CREDENTIALS is required for Gmail MCP",
+			})
+			return
+		}
+	case "figma":
+		if req.Config["FIGMA_ACCESS_TOKEN"] == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "FIGMA_ACCESS_TOKEN is required for Figma MCP",
+			})
+			return
+		}
+	case "brave-search":
+		if req.Config["BRAVE_SEARCH_API_KEY"] == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "BRAVE_SEARCH_API_KEY is required for Brave Search MCP",
+			})
+			return
+		}
+	case "puppeteer", "docker":
+		// These servers don't require API keys
+		break
+	default:
+		// For unknown servers, allow installation without credentials
+		break
 	}
 
 	// Start installation
@@ -471,5 +565,50 @@ func (a *API) GetServerDetails(c *gin.Context) {
 		"error_count":       len(errors),
 		"validation_result": validationResult,
 		"timestamp":         time.Now().Unix(),
+	})
+}
+
+// GetRequiredCredentials returns the required credentials for a server
+func (a *API) GetRequiredCredentials(serverID string) []string {
+	switch serverID {
+	case "gohighlevel":
+		return []string{"GHL_API_KEY", "GHL_LOCATION_ID"}
+	case "meta-ads":
+		return []string{"META_ACCESS_TOKEN", "META_APP_ID", "META_APP_SECRET"}
+	case "google-ads":
+		return []string{"GOOGLE_ADS_CUSTOMER_ID", "GOOGLE_ADS_DEVELOPER_TOKEN"}
+	case "github":
+		return []string{"GITHUB_PERSONAL_ACCESS_TOKEN"}
+	case "slack":
+		return []string{"SLACK_BOT_TOKEN"}
+	case "notion":
+		return []string{"NOTION_API_KEY"}
+	case "stripe":
+		return []string{"STRIPE_SECRET_KEY"}
+	case "google-maps":
+		return []string{"GOOGLE_MAPS_API_KEY"}
+	case "gmail":
+		return []string{"GMAIL_CREDENTIALS"}
+	case "figma":
+		return []string{"FIGMA_ACCESS_TOKEN"}
+	case "brave-search":
+		return []string{"BRAVE_SEARCH_API_KEY"}
+	case "puppeteer", "docker":
+		return []string{} // No credentials required
+	default:
+		return []string{} // Unknown servers don't require credentials
+	}
+}
+
+// GetServerRequiredCredentials returns the required credentials for a specific server
+func (a *API) GetServerRequiredCredentials(c *gin.Context) {
+	serverID := c.Param("id")
+
+	credentials := a.GetRequiredCredentials(serverID)
+
+	c.JSON(http.StatusOK, gin.H{
+		"server_id":            serverID,
+		"required_credentials": credentials,
+		"requires_credentials": len(credentials) > 0,
 	})
 }
